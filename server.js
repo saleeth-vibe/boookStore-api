@@ -1,12 +1,14 @@
-const express = require('express'); 
+const express = require('express');
 const app = express();
 
 const connectDB = require('./config/db');
 
 connectDB();
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
-    res.json({ message: 'Welcome to the Bookstore API!' });
+    res.json({message: 'API server is running'});
 });
 
 app.use('/api/books', require('./routes/bookRoutes'));
@@ -14,3 +16,4 @@ app.use('/api/books', require('./routes/bookRoutes'));
 app.listen(5000, () => {
     console.log('Server is running on port 5000');
 });
+

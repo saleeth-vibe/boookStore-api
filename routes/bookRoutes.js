@@ -3,32 +3,59 @@ const router = express.Router();
 
 const Book = require('../models/bookModel');
 
-router.get('/', (req, res) => {
-    res.json({ message: 'Listing All Books' });
+router.get('/', async (req, res) => {
+    try {
+        const books = await Book.find({});
+        return res.json({message: 'Welcome to the Bookstore API', books});
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
+    }
 });
 
-router.get('/:bookid', (req, res) => {
-    res.json({ message: `Listing Book with ID: ${req.params.bookid}` });
+router.get('/:bookId', async (req, res) => {
+    console.log(req.params.bookId);
+    try {
+        const book = await Book.findById(req.params.bookId);
+        return res.json({message: 'Retrieving book information', book});
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
+    }
 });
 
 router.post('/', async (req, res) => {
     console.log(req.body);
-
     try {
         const book = await Book.create(req.body);
-        return res.json({ book: book });
-    } catch (error) {
-        console.log(error);
-        returnres.status(500).json({ error: 'Server Error' });
+        return res.json({message: 'Creating a new book', book});
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
     }
 });
 
-router.put('/:bookid', (req, res) => {
-    res.json({ message: `Updating Book with ID: ${req.params.bookid}` });
+
+router.put('/:bookId', async(req, res) => {
+    console.log(req.params.bookId);
+
+    try {
+        const book = await Book.findByIdAndUpdate(req.params.bookId, req.body, { new: true });
+        return res.json({message: 'Updating book information', book});
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
+    }
 });
 
-router.delete('/:bookid', (req, res) => {
-    res.json({ message: `Deleting Book with ID: ${req.params.bookid}` });
+router.delete('/:bookId', async (req, res) => {
+    try {
+        const book = await Book.findByIdAndDelete(req.params.bookId);
+        return res.json({message: 'Deleting a book', book});
+    }catch (error) {
+        console.error(error);
+        return res.status(500).json({message: 'Server error'});
+    }
 });
 
 module.exports = router;
